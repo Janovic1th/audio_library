@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import './App.css'
 import axios from 'axios'
 
-const API_URL = "https://secyechj6a.execute-api.us-east-1.amazonaws.com/dev/book_service";
+const API_URL = "https://vuofqh5r9b.execute-api.us-east-1.amazonaws.com/qe";
 
 const App: React.FC = () => {
     const [message, setMessage] = useState<string>("");

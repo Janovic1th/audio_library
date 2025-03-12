@@ -24,7 +24,7 @@ const App: React.FC = () => {
                 // Use Authorization header with the access token from Cognito
                 const response = await axios.get<{ message: string }>(API_URL, {
                     headers: {
-                        Authorization: `Bearer ${auth.user?.access_token}`,
+                        mytoken: `${auth.user?.access_token}`,
                     },
                 });
                 setMessage(response.data.message); // Set the message returned from Lambda
@@ -38,7 +38,7 @@ const App: React.FC = () => {
     };
 
     const signOutRedirect = () => {
-        const clientId = "5c05aqpqc4mfeu3ig3fbrvefs9";
+        const clientId = "61u6r671gmsqd2pskn6979pamr";
         const logoutUri = "https://main.d14hg0ymuepfz9.amplifyapp.com";
         const cognitoDomain = "https://eu-central-1wwsaqitue.auth.eu-central-1.amazoncognito.com";
         window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;

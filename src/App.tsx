@@ -39,7 +39,7 @@ const App: React.FC = () => {
 
     const signOutRedirect = () => {
         const clientId = "61u6r671gmsqd2pskn6979pamr";
-        const logoutUri = "https://main.d14hg0ymuepfz9.amplifyapp.com";
+        const logoutUri = "https://main.d14hg0ymuepfz9.amplifyapp.com/";
         const cognitoDomain = "https://eu-central-1ihrdmj2g9.auth.eu-central-1.amazoncognito.com";
         window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
     };

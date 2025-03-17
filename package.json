@@ -16,6 +16,7 @@
     "oidc-client-ts": "^3.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-dropzone": "^14.3.8",
     "react-oidc-context": "^3.2.0"
   },
   "devDependencies": {
@@ -24,6 +25,7 @@
     "@eslint/js": "^9.21.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
+    "@types/react-dropzone": "^4.2.2",
     "@vitejs/plugin-react": "^4.3.4",
     "aws-cdk": "^2.1000.2",
     "aws-cdk-lib": "^2.180.0",

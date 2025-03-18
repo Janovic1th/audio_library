@@ -1,80 +1,15 @@
-import React, { useState, useCallback } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
+import React, { useState } from "react";
 import './App.css'
 import axios from 'axios'
-import { useDropzone } from "react-dropzone";
-// import { useAuth } from "react-oidc-context";
+import PdfList from "../components/PdfList.tsx";
+import UploadFile from "../components/UploadFile.tsx";
 
 
-const API_URL = "https://edk9b6uukd.execute-api.eu-central-1.amazonaws.com/dev/upload-file";
-// const API_GET_UPLOAD_URL = "https://edk9b6uukd.execute-api.eu-central-1.amazonaws.com/dev/audiolibrary-books-storage/";
+const API_URL = "https://edk9b6uukd.execute-api.eu-central-1.amazonaws.com/dev/get-url";
 
 
 const App: React.FC = () => {
-    const [message, setMessage] = useState<string>("d");
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    // const auth = useAuth()
-
-    const onDrop = useCallback((acceptedFiles: File[]) => {
-        const file = acceptedFiles[0];
-        if (file.type === "application/pdf") {
-            setSelectedFile(file);
-            setMessage("PDF LOADED");
-        } else {
-            setMessage("Only PDF files are allowed.");
-        }
-    }, []);
-
-    const uploadFile = async () => {
-        if (!selectedFile) {
-            setMessage("No file selected.");
-            return;
-        }
-
-        try {
-            // Convert file to Base64
-            const base64String = await toBase64(selectedFile);
-            // console.log("base64String", base64String);
-            // Prepare request body
-            const requestBody = {
-                filename: selectedFile.name,
-                file_content: base64String,
-            };
-
-            // Send PUT request
-
-            // const response = await axios.post(`${API_URL}/upload-file`, requestBody, {
-            const response = await axios.post(API_URL, requestBody, {
-            // const response = await axios.post<{ message: string }>(API_URL,{
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-
-            console.log(response);
-
-            setMessage("File uploaded successfully.");
-            console.log("Upload successful:", response.data);
-        } catch (error) {
-            setMessage("Upload failed: " + error);
-            console.error("Error uploading file:", error);
-        }
-    };
-
-    // Helper function to convert file to Base64
-    const toBase64 = (file: File): Promise<string> => {
-        console.log("Kokot");
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                const base64String = (reader.result as string).split(",")[1]; // Remove the data prefix
-                resolve(base64String);
-            };
-            reader.onerror = (error) => reject(error);
-        });
-    };
+    const [refreshKey, setRefreshKey] = useState(0);
 
 
     const callLambda = async () => {
@@ -90,68 +25,19 @@ const App: React.FC = () => {
                     "Content-Type": "application/json",
                 },
             });
+            console.log(response);
             // const response = await axios.post<{ message: string }>(API_URL,);
-            setMessage(response.data.message); // Set the message returned from Lambda
+            // setMessage(response.data.message); // Set the message returned from Lambda
         } catch (error) {
-            setMessage("Error calling Lambda: " + error); // Handle any errors
+            console.error(error);
+            // setMessage("Error calling Lambda: " + error); // Handle any errors
         }
 
     };
 
-    // const callLambda = async () => {
-    //     if (auth.isAuthenticated) {
-    //         try {
-    //             const token = auth.user?.access_token;
-    //             if (!token) {
-    //                 console.error("Access token is missing!");
-    //                 return;
-    //             }
-    //             console.log(token);
-    //             // Use Authorization header with the access token from Cognito
-    //             const response = await axios.get<{ message: string }>(API_URL, {
-    //                 headers: {
-    //                     mytoken: `${auth.user?.access_token}`,
-    //                 },
-    //             });
-    //             setMessage(response.data.message); // Set the message returned from Lambda
-    //         } catch (error) {
-    //             setMessage("Error calling Lambda: " + error); // Handle any errors
-    //         }
-    //     } else {
-    //         setMessage("User not authenticated.");
-    //     }
-    //
-    // };
-
-    // const signOutRedirect = () => {
-    //     const clientId = "61u6r671gmsqd2pskn6979pamr";
-    //     const logoutUri = "https://main.d14hg0ymuepfz9.amplifyapp.com/";
-    //     const cognitoDomain = "https://eu-central-1ihrdmj2g9.auth.eu-central-1.amazoncognito.com";
-    //     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
-    // };
-
-    // if (auth.isLoading) {
-    //     return <div>Loading...</div>;
-    // }
-    //
-    // if (auth.error) {
-    //     return <div>Encountering error... {auth.error.message}</div>;
-    // }
-    //
-    // if (auth.isAuthenticated) {
-    //     return (
-    //         <div>
-    //             <h1>Welcome, {auth.user?.profile.email}</h1>
-    //             <button onClick={callLambda}>Call Lambda</button>
-    //             <p>{message}</p>
-    //             {/* Do not display tokens */}
-    //             <button onClick={() => auth.removeUser()}>Sign out</button>
-    //             {/*<button onClick={() => signOutRedirect()}>Sign out</button>*/}
-    //         </div>
-    //     );
-    // }
-
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, });
+    const handleUploadSuccess = () => {
+        setRefreshKey((prev) => prev + 1);
+    };
 
     return (
         <div style={{ textAlign: "center", marginTop: "50px" }}>
@@ -159,13 +45,8 @@ const App: React.FC = () => {
             {/*<button onClick={() => signOutRedirect()}>Sign out</button>*/}
             <h1>React + AWS Lambda</h1>
             <button onClick={callLambda}>Call Lambda</button>
-            <div {...getRootProps()} style={{ border: "2px dashed #000", padding: "20px", cursor: "pointer" }}>
-                <input {...getInputProps()} />
-                {isDragActive ? <p>Drop the file here...</p> : <p>Drag & drop a PDF file here, or click to select one.</p>}
-            </div>
-            {selectedFile && <p>Selected File: {selectedFile.name}</p>}
-            {selectedFile && <button onClick={uploadFile}>Send</button>}
-            <p>{message}</p>
+            <UploadFile onUploadSuccess={handleUploadSuccess} />
+            <PdfList refreshKey={refreshKey} />
         </div>
     );
 };
